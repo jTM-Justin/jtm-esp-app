@@ -1,0 +1,18 @@
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "jtm-esp-app"
+version = "0.1.0"
+description = "AI ESP32 keyboard app using secure Cloudflare tunnel routing"
+readme = "README.md"
+requires-python = ">=3.10"
+authors = [{ name = "jTM-Justin" }]
+license = { text = "MIT" }
+
+[project.scripts]
+jtm-esp-app = "jtm_esp_app.cli:main"
+
+[tool.setuptools]
+packages = ["jtm_esp_app"]
