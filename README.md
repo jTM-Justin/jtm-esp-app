@@ -1,42 +1,33 @@
-# ESP32-S3 USB HID Keyboard/Mouse Bridge
+# ESP32 Keyboard with Cloudflare Tunnel
 
-This project creates a USB HID bridge for an ESP32-S3 board with two USB-C ports. The board presents itself as a USB keyboard and mouse while forwarding input and output to a local service exposed through a Cloudflare tunnel.
+This project is for a bare ESP32-S3 board with no screen, no microphone, and no speaker. It acts as a simple USB keyboard sender and sends keyboard events to a local service that is exposed through a Cloudflare tunnel.
 
-## Network settings
+## Target setup
 
-- Local service IP: `192.168.1.100`
+- Board: ESP32-S3 bare dev board
+- Local tunnel target: `192.168.1.100`
 - Cloudflare tunnel port: `8080`
-- Target bridge route: `http://192.168.1.100:8080/bridge`
+- Endpoint: `http://192.168.1.100:8080/keyboard`
+- Hardware profile: no display, no mic, no speaker
 
-## Hardware idea
+## Project files
 
-- USB-C port 1: host connection for the downstream keyboard/mouse device
-- USB-C port 2: USB client connection for the ESP32-S3 acting as a HID device
-- ESP32-S3 runs the bridge firmware and submits keyboard/mouse reports over Wi-Fi to the local service
-- The local service can then relay traffic to the Cloudflare tunnel on port 8080
-
-## Firmware layout
-
-- `src/config.h`: bridge settings
-- `src/main.cpp`: Arduino/ESP32-S3 sketch
+- `platformio.ini` — PlatformIO config for the bare ESP32-S3
+- `src/config.h` — current keyboard configuration
+- `src/last_config.h` — saved last-known working configuration
+- `src/main.cpp` — ESP32 keyboard firmware entry point
 
 ## Quick start
 
 1. Install PlatformIO.
-2. Open this folder as a PlatformIO project.
-3. Update Wi-Fi credentials and tunnel endpoint values in `src/config.h`.
-4. Build and upload to the ESP32-S3.
+2. Open this folder as the project root.
+3. Update Wi-Fi SSID/password in `src/config.h`.
+4. Build and upload:
 
 ```bash
 pio run -t upload
 ```
 
-## Example sketch behavior
+## Notes
 
-The firmware does the following:
-
-- connects to Wi-Fi
-- opens a TCP connection to `192.168.1.100:8080`
-- advertises the ESP32-S3 as a USB HID keyboard and mouse
-- sends HID reports to the bridge endpoint for remote processing
-- sends acknowledgements back to the host device when data is received
+This is deliberately a lightweight keyboard-only implementation. It does not use a screen or audio peripherals and is intended for a minimal bare ESP32-S3 setup.

@@ -1,5 +1,6 @@
 #pragma once
 
+// Last saved keyboard configuration for the bare ESP32-S3 board.
 #define ESP32S3_KEYBOARD_WIFI_SSID "YOUR_WIFI_SSID"
 #define ESP32S3_KEYBOARD_WIFI_PASSWORD "YOUR_WIFI_PASSWORD"
 #define ESP32S3_KEYBOARD_TARGET_IP "192.168.1.100"

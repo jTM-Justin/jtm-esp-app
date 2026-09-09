@@ -8,7 +8,7 @@ WiFiClient client;
 
 void connectToWiFi() {
   WiFi.mode(WIFI_STA);
-  WiFi.begin(ESP32S3_BRIDGE_WIFI_SSID, ESP32S3_BRIDGE_WIFI_PASSWORD);
+  WiFi.begin(ESP32S3_KEYBOARD_WIFI_SSID, ESP32S3_KEYBOARD_WIFI_PASSWORD);
 
   Serial.println("Connecting to Wi-Fi...");
   while (WiFi.status() != WL_CONNECTED) {
@@ -20,18 +20,24 @@ void connectToWiFi() {
   Serial.printf("Wi-Fi connected: %s\n", WiFi.localIP().toString().c_str());
 }
 
-bool connectToBridge() {
-  if (!client.connect(ESP32S3_BRIDGE_TARGET_IP, ESP32S3_BRIDGE_TARGET_PORT)) {
-    Serial.printf("Failed to connect to %s:%d\n", ESP32S3_BRIDGE_TARGET_IP, ESP32S3_BRIDGE_TARGET_PORT);
-    return false;
+bool sendKeyboardEvent(const char *key) {
+  if (!client.connected()) {
+    if (!client.connect(ESP32S3_KEYBOARD_TARGET_IP, ESP32S3_KEYBOARD_TARGET_PORT)) {
+      Serial.printf("Failed to connect to %s:%d\n",
+                    ESP32S3_KEYBOARD_TARGET_IP,
+                    ESP32S3_KEYBOARD_TARGET_PORT);
+      return false;
+    }
   }
 
-  Serial.printf("Connected to bridge at %s:%d\n", ESP32S3_BRIDGE_TARGET_IP, ESP32S3_BRIDGE_TARGET_PORT);
-  client.println("POST " ESP32S3_BRIDGE_PATH " HTTP/1.1");
-  client.printf("Host: %s:%d\r\n", ESP32S3_BRIDGE_TARGET_IP, ESP32S3_BRIDGE_TARGET_PORT);
+  client.printf("POST %s HTTP/1.1\r\n", ESP32S3_KEYBOARD_PATH);
+  client.printf("Host: %s:%d\r\n", ESP32S3_KEYBOARD_TARGET_IP, ESP32S3_KEYBOARD_TARGET_PORT);
   client.println("Content-Type: application/json");
   client.println("Connection: close");
+  client.print("Content-Length: ");
+  client.println(strlen(key) + 32);
   client.println();
+  client.printf("{\"type\":\"keyboard\",\"key\":\"%s\"}\r\n", key);
   return true;
 }
 
@@ -39,20 +45,24 @@ void setup() {
   Serial.begin(115200);
   delay(1000);
 
-  Serial.println("ESP32-S3 USB HID keyboard/mouse bridge starting...");
-  Serial.printf("Target bridge = %s:%d%s\n",
-                ESP32S3_BRIDGE_TARGET_IP,
-                ESP32S3_BRIDGE_TARGET_PORT,
-                ESP32S3_BRIDGE_PATH);
+  Serial.println("ESP32 keyboard booting...");
+  Serial.printf("Tunnel target = %s:%d%s\n",
+                ESP32S3_KEYBOARD_TARGET_IP,
+                ESP32S3_KEYBOARD_TARGET_PORT,
+                ESP32S3_KEYBOARD_PATH);
 
   connectToWiFi();
-  connectToBridge();
+  sendKeyboardEvent("READY");
 }
 
 void loop() {
-  if (!client.connected()) {
-    connectToBridge();
+  static unsigned long lastSend = 0;
+  const char *demoKey = "A";
+
+  if (millis() - lastSend > 3000) {
+    sendKeyboardEvent(demoKey);
+    lastSend = millis();
   }
 
-  delay(ESP32S3_BRIDGE_POLL_MS);
+  delay(ESP32S3_KEYBOARD_POLL_MS);
 }
