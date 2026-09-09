@@ -49,7 +49,16 @@ void tickLed() {
 }
 
 void connectToWiFi() {
+  IPAddress localIp;
+  IPAddress gateway;
+  IPAddress subnet;
+
+  localIp.fromString(ESP32S3_KEYBOARD_LOCAL_IP);
+  gateway.fromString(ESP32S3_KEYBOARD_GATEWAY);
+  subnet.fromString(ESP32S3_KEYBOARD_SUBNET);
+
   WiFi.mode(WIFI_STA);
+  WiFi.config(localIp, gateway, subnet);
   WiFi.begin(ESP32S3_KEYBOARD_WIFI_SSID, ESP32S3_KEYBOARD_WIFI_PASSWORD);
 
   Serial.println("Connecting to Wi-Fi...");
