@@ -32,6 +32,14 @@ class TestKeyboardConfig(unittest.TestCase):
         content = CONFIG.read_text(encoding='utf-8')
         self.assertIn('USB_KEYBOARD_ONLY', content)
 
+    def test_ready_state_flow_is_declared(self):
+        content = (ROOT / 'src' / 'main.cpp').read_text(encoding='utf-8')
+        self.assertIn('BOOTING', content)
+        self.assertIn('WIFI_READY', content)
+        self.assertIn('TUNNEL_READY', content)
+        self.assertIn('DEPLOY_READY', content)
+        self.assertIn('READY', content)
+
 
 if __name__ == '__main__':
     unittest.main()

@@ -11,6 +11,17 @@ This project is for a bare ESP32-S3 board with no screen, no microphone, and no 
 - Endpoint: `http://192.168.1.100:8080/keyboard`
 - Hardware profile: no display, no mic, no speaker
 
+## Boot and deploy flow
+
+The firmware now follows a single ready path:
+
+1. Boot starts in `BOOTING`
+2. Wi‑Fi connects and moves to `WIFI_READY`
+3. Tunnel connection moves to `TUNNEL_READY`
+4. A successful deploy signal sends `READY` and settles at `DEPLOY_READY`
+
+The LED stays dim and fades between states instead of flashing.
+
 ## Project files
 
 - `platformio.ini` — PlatformIO config for the bare ESP32-S3
