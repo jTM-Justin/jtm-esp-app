@@ -14,6 +14,13 @@ class TestKeyboardConfig(unittest.TestCase):
             self.assertIn('8080', content)
             self.assertIn('/keyboard', content)
 
+    def test_board_uses_fixed_local_ip(self):
+        for name in (CONFIG, LAST):
+            content = name.read_text(encoding='utf-8')
+            self.assertIn('ESP32S3_KEYBOARD_LOCAL_IP "192.168.1.50"', content)
+            self.assertIn('ESP32S3_KEYBOARD_GATEWAY "192.168.1.1"', content)
+            self.assertIn('ESP32S3_KEYBOARD_SUBNET "255.255.255.0"', content)
+
     def test_board_has_no_display_audio_peripherals(self):
         for name in (CONFIG, LAST):
             content = name.read_text(encoding='utf-8')

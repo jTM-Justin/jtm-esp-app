@@ -5,6 +5,7 @@ This project is for a bare ESP32-S3 board with no screen, no microphone, and no 
 ## Target setup
 
 - Board: ESP32-S3 bare dev board
+- ESP32 local IP: `192.168.1.50`
 - Local tunnel target: `192.168.1.100`
 - Cloudflare tunnel port: `8080`
 - Endpoint: `http://192.168.1.100:8080/keyboard`
